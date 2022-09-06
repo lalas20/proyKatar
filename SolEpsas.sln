@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Epsas", "Web.Epsas\Web.Epsas.csproj", "{65705A2D-CB76-43B4-85BF-338D74DC5F85}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Epsas", "Api.Epsas\Api.Epsas.csproj", "{5692867C-4FB7-45ED-A363-DA4D1E6C996F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65705A2D-CB76-43B4-85BF-338D74DC5F85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65705A2D-CB76-43B4-85BF-338D74DC5F85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65705A2D-CB76-43B4-85BF-338D74DC5F85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65705A2D-CB76-43B4-85BF-338D74DC5F85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5692867C-4FB7-45ED-A363-DA4D1E6C996F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5692867C-4FB7-45ED-A363-DA4D1E6C996F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5692867C-4FB7-45ED-A363-DA4D1E6C996F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5692867C-4FB7-45ED-A363-DA4D1E6C996F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C572F2F-9BF0-4624-8EE7-CDCDC33C7762}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/cssprosrl
+		SccProjectUniqueName0 = Web.Epsas\\Web.Epsas.csproj
+		SccProjectName0 = Web.Epsas
+		SccAuxPath0 = https://dev.azure.com/cssprosrl
+		SccLocalPath0 = Web.Epsas
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = Api.Epsas\\Api.Epsas.csproj
+		SccProjectName1 = Api.Epsas
+		SccAuxPath1 = https://dev.azure.com/cssprosrl
+		SccLocalPath1 = Api.Epsas
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

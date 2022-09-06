@@ -1,0 +1,125 @@
+﻿@page "/Usuarios"
+@layout MainLayout
+@inherits MainBaseComponent
+<div>
+    <MudBreadcrumbs Items="_items" Class="ml-3 pa-0 mb-4" Separator="/" Style="font-size: 0.85em"></MudBreadcrumbs>
+    <MudDivider></MudDivider>
+    <br />
+    <br />
+    <MudTable Items="@_Usuarios"
+              Dense="true"
+              Hover="true"
+              Bordered="true"
+              FixedHeader="true"
+              Height="500px"
+              Striped="true"
+              Filter="new Func<UsuariosModel,bool>(FilterFunc1)">
+        <ToolBarContent>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Href="Usuarios/Nuevo" Class="mr-2" />
+            <MudText Typo="Typo.h6">Usuarios</MudText>
+            <MudSpacer></MudSpacer>
+            <MudTextField @bind-Value="searchString" Placeholder="Buscar por cedula o nombre" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh></MudTh>
+            <MudTh Style="width:50px"><MudTableSortLabel SortBy="new Func<UsuariosModel, object>(x=>x.IdsegUsuarios)">Id</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsuariosModel, object>(x=>x.Nombre)">Nombre</MudTableSortLabel> </MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsuariosModel, object>(x=>x.Cedula)">Cedula</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsuariosModel, object>(x=>x.Login)">Login</MudTableSortLabel> </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd Class="pa-0" Style="text-align:center">               
+                <MudIconButton Icon="@Icons.Material.Outlined.Edit" @onclick="()=>BtnEdit(context.IdsegUsuarios)" Variant="Variant.Text" Color="Color.Warning" Size="Size.Small" />
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete" @onclick="()=>BtnDelete(context.IdsegUsuarios)" Variant="Variant.Text" Color="Color.Error" Size="Size.Small" />
+            </MudTd>
+            <MudTd DataLabel="Id">@context.IdsegUsuarios</MudTd>
+            <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
+            <MudTd DataLabel="Cedula">@context.Cedula</MudTd>
+            <MudTd DataLabel="Login">@context.Login</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</div>
+
+@code {
+
+    private List<UsuariosModel> _Usuarios = new List<UsuariosModel>();
+    private string searchString = "";
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Usuarios", href: null, disabled: true)
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _Loading.Show();
+        try
+        {
+            var result = await _Rest.GetAsync<List<UsuariosModel>>("Users");
+            if (result.State != State.Success)
+            {
+                throw new Exception(result.Message);
+            }
+            _Usuarios.AddRange(result.Data);
+        }
+        catch (Exception e)
+        {
+            _MessageShow(e.Message, State.Error);
+        }
+        _Loading.Hide();
+    }
+
+    private void BtnEdit(int IdsegUsuarios)
+    {
+        _navMgr.NavigateTo($"Usuarios/Editar/{IdsegUsuarios}");
+    }
+
+    private void BtnDelete(int IdsegUsuarios)
+    {
+        _Loading.Show();
+        try
+        {
+            _MessageConfirm($"Esta seguro de eliminar el Supermercado Nro.: {IdsegUsuarios} ?", async () =>
+           {
+               var resp = await _Rest.DeleteAsync<UsuariosModel>("Users", IdsegUsuarios);
+               if (resp.State == State.Success)
+               {
+                   _Usuarios.Remove(_Usuarios.Find(x => x.IdsegUsuarios == IdsegUsuarios));
+                   StateHasChanged();
+               }
+               _MessageShow(resp.Message, resp.State);
+           });
+        }
+        catch (Exception e)
+        {
+            _DialogShow(e.Message, State.Error);
+        }
+        _Loading.Hide();
+
+    }
+
+
+    private void BtnSucursal(int IdsegUsuarios)
+    {
+
+        _navMgr.NavigateTo($"Usuarios/Sucursal/{IdsegUsuarios}");
+    }
+
+    private bool FilterFunc1(UsuariosModel element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(UsuariosModel element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Cedula.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Nombre.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+
+}

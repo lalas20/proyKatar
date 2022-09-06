@@ -1,0 +1,26 @@
+﻿@page "/Home"
+@layout MainLayout
+@inherits MainBaseComponent
+<div>
+    <MudBreadcrumbs Items="_items" Class="ml-3 pa-0 mb-4" Separator="/" Style="font-size: 0.85em"></MudBreadcrumbs>
+    <MudDivider></MudDivider>
+    <br />
+    <br />
+</div>
+
+
+@code {
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: null, disabled: true)
+    };
+
+
+    protected override void OnParametersSet()
+    {
+
+    }
+
+
+}

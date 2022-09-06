@@ -1,0 +1,28 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using MudBlazor
+@using Web.Epsas
+@using Blazored.FluentValidation
+
+@using Web.Epsas.Context.Services.Interfaces
+@using Web.Epsas.Shared.Component
+@using WebEpsas.Theme
+
+@using Web.Epsas.Context.Model
+@using Web.Epsas.Context.Services.Implementations
+@using Web.Epsas.Shared
+@using Web.Epsas.Context.Abstract
+
+@inject NavigationManager _navMgr
+@inject LoadingService _Loading
+@inject ManagerRest _Rest
+@inject ISnackbar _snackbar
+@inject IDialogService DialogService
+@inject IManagerAuthorize _auth
+@inject IManagerStorage _storage

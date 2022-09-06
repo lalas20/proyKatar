@@ -1,0 +1,246 @@
+﻿@page "/Usuarios/Editar/{IdsegUsuarios:int}"
+@inherits MainBaseComponent
+@layout MainLayout
+
+<MudBreadcrumbs Items="_items" Class="ml-3 pa-0 mb-4" Separator="/" Style="font-size: 0.85em"></MudBreadcrumbs>
+<MudDivider></MudDivider>
+<br />
+<br />
+<MudGrid>
+    <MudItem lg="3" sm="12" xs="12" md="3" xl="3">
+        <MudText Typo="Typo.subtitle1">
+            Editar Registro Usuario <br />
+            Id : @_Usuario.IdsegUsuarios
+        </MudText><br />
+
+        <MudText Typo="Typo.caption">
+            En el siguiente formulario se registrará los datos de un supermercado.
+        </MudText><br />
+        <br />
+    </MudItem>
+
+    <MudItem lg="9" sm="12" xs="12" md="9" xl="9">
+        <MudCard>
+            <EditForm OnValidSubmit="_Onvalid" Model="@_Usuario">
+                <DataAnnotationsValidator />
+                <MudCardActions>
+                    <MudGrid>
+                        <MudItem Class="d-flex ml-auto">
+                            <div class="ml-2">
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Guardar</MudButton>
+                                <MudButton Href="Usuarios" Variant="Variant.Filled" Color="Color.Error">Cancelar</MudButton>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardActions>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Nombre *</MudText>
+                            <MudTextField @bind-Value="_Usuario.Nombre"
+                                          For="@(() => _Usuario.Nombre)"
+                                          Variant="Variant.Outlined">
+                            </MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Cedula *</MudText>
+                            <MudTextField @bind-Value="_Usuario.Cedula"
+                                          InputType="InputType.Number"
+                                          For="@(() => _Usuario.Cedula)"
+                                          Variant="Variant.Outlined">
+                            </MudTextField>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Login *</MudText>
+                            <MudTextField @bind-Value="_Usuario.Login"
+                                          For="@(() => _Usuario.Login)"
+                                          Variant="Variant.Outlined">
+                            </MudTextField>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Password *</MudText>
+                            <MudTextField @bind-Value="_Usuario.Password"
+                                          InputType="InputType.Password"
+                                          For="@(() => _Usuario.Password)"
+                                          Variant="Variant.Outlined">
+                            </MudTextField>
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Rol *</MudText>
+                            <MudAutocomplete T="string" Label="" @bind-Value="_Usuario.NombreRol" SearchFunc="@Search1"
+                                             Variant="Variant.Outlined"
+                                             For="@(() => _Usuario.NombreRol)"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6" md="6">
+                            <MudText Style="font-weight:500" Typo="Typo.caption" Color="Color.Primary">Estado *</MudText>
+                            <MudAutocomplete T="string" Label="" @bind-Value="_Usuario.Estado" SearchFunc="@SearchEstado"
+                                             Variant="Variant.Outlined"
+                                             For="@(() => _Usuario.Estado)"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="true" />
+                        </MudItem>
+
+                    </MudGrid>
+                </MudCardContent>
+            </EditForm>
+        </MudCard>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+
+    [Parameter]
+    public int IdsegUsuarios { get; set; }
+
+    private List<string> _strRoles = new List<string>();
+    private List<string> _strEstado = new List<string>();
+
+    UsuariosDto _Usuario = new UsuariosDto();
+
+    List<RolModel> _lstRoles = new List<RolModel>();
+    List<ClasificadorModel> _lstEstados = new List<ClasificadorModel>();
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Usuarios", href: "Editar"),
+        new BreadcrumbItem("Nuevo", href: null, disabled: true)
+    };
+
+    private async Task _Onvalid()
+    {
+        await SaveChange();
+    }
+
+    private async Task SaveChange()
+    {
+        _Loading.Show();
+        try
+        {
+            _Usuario.IdsegRoles = _lstRoles.Where(x => x.Descripcion == _Usuario.NombreRol).First().IdsegRoles;
+            _Usuario.IdcEstadousaurio = _lstEstados.Where(x => x.Descripcion == _Usuario.Estado).First().IdparamClasificador;
+
+            var _save = await _Rest.PutAsync<UsuariosDto>("Users", _Usuario, IdsegUsuarios);
+            if (_save.State != State.Success)
+            {
+                throw new Exception(_save.Message);
+            }
+            _MessageShow(_save.Message, _save.State);
+            _navMgr.NavigateTo("Usuarios");
+        }
+        catch (Exception e)
+        {
+            _DialogShow(e.Message, State.Error);
+        }
+        _Loading.Hide();
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetRoles();
+        await GetEstado();
+        await GetById();
+    }
+
+    private async Task GetRoles()
+    {
+        _Loading.Show();
+        try
+        {
+            var result = await _Rest.GetAsync<List<RolModel>>("Users/Roles");
+            if (result.State != State.Success)
+            {
+                throw new Exception(result.Message);
+            }
+            _lstRoles.AddRange(result.Data);
+
+            _lstRoles.ForEach(x =>
+            {
+                _strRoles.Add(x.Descripcion);
+            });
+
+        }
+        catch (Exception e)
+        {
+            _MessageShow(e.Message, State.Error);
+        }
+        _Loading.Hide();
+    }
+
+    private async Task<IEnumerable<string>> Search1(string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _strRoles;
+        return _strRoles.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<string>> SearchEstado(string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _strEstado;
+        return _strEstado.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task GetById()
+    {
+
+        try
+        {
+            var vEntidad = await _Rest.GetAsyncFromPath<UsuariosDto>("Users", new { id = IdsegUsuarios });
+            if (vEntidad.State != State.Success)
+            {
+                _MessageShow(vEntidad.Message, vEntidad.State);
+            }
+            _Usuario = vEntidad.Data;
+
+            _Usuario.NombreRol = _lstRoles.Find(x => x.IdsegRoles == _Usuario.IdsegRoles).Descripcion;
+            _Usuario.Estado = _lstEstados.Find(x => x.IdparamClasificador == _Usuario.IdcEstadousaurio).Descripcion;
+
+        }
+        catch (Exception e)
+        {
+            _MessageShow(e.Message, State.Error);
+        }
+    }
+
+    private async Task GetEstado()
+    {
+        _Loading.Show();
+        try
+        {
+            var result = await _Rest.GetAsync<List<ClasificadorModel>>("Users/Estado");
+            if (result.State != State.Success)
+            {
+                throw new Exception(result.Message);
+            }
+            _lstEstados.AddRange(result.Data);
+
+            _lstEstados.ForEach(x =>
+            {
+                _strEstado.Add(x.Descripcion);
+            });
+
+        }
+        catch (Exception e)
+        {
+            _MessageShow(e.Message, State.Error);
+        }
+        _Loading.Hide();
+    }
+    
+}

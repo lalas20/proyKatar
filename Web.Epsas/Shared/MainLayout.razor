@@ -1,0 +1,112 @@
+﻿@using Web.Epsas.Dtos
+@using WebEpsas.Theme
+@inherits LayoutComponentBase
+@attribute [Authorize]
+@using System.Globalization
+
+<MudThemeProvider Theme="_ThemeGenesis" />
+<MudDialogProvider FullWidth="true"
+                   MaxWidth="MaxWidth.ExtraSmall"
+                   CloseButton="false"
+                   DisableBackdropClick="true"
+                   NoHeader="false"
+                   Position="DialogPosition.TopCenter" />
+<MudSnackbarProvider />
+
+<AuthorizeView>
+    <Authorized>
+        <MudLayout>
+
+            <MudAppBar Elevation="0">
+                <img src="imagen/logo_epsas.svg" alt="Logo Institucional" style="cursor: pointer; margin: auto;height: 80px;margin-left: -11px;" @onclick="@(()=> DrawerToggle())" />
+                <MudIcon Icon="@Icons.Material.Filled.ExitToApp" Title="Favorite" Style="color:white" @onclick="@(()=> Exit())" />
+            </MudAppBar>
+
+            <MudDrawer @bind-Open="_drawerOpen" Fixed="true" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="false">
+
+                <MudDrawerHeader Style="margin-left: -34px; cursor: pointer;display: flex;min-height: var(--mud-appbar-height); padding: 13px 1px 10px 32px;background-color: #f6f6f6;">
+                    <MudPaper Class="pa-2 ma-1  rounded-circle" @onclick="@(()=> DrawerToggle())">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Title="Favorite" Color="Color.Primary" Size="Size.Large" />
+                    </MudPaper>
+                    @if (_drawerOpen)
+                    {
+                        <div style="margin-left:5px; margin-top:19px">
+                            <MudText Style="font-size:0.7em" Typo="Typo.caption">@(_User.Nombre==null?"":_User.Nombre)</MudText><br />
+                            <MudText Style="font-size:0.7em" Typo="Typo.caption">@(_User.Roles==null?"":_User.Roles.Descripcion)</MudText>
+                        </div>
+                    }
+                </MudDrawerHeader>
+                <MudDivider></MudDivider>
+                <NavMenu />
+            </MudDrawer>
+
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+                    @Body
+                </MudContainer>
+            </MudMainContent>
+
+        </MudLayout>
+    </Authorized>
+    <NotAuthorized>
+        <h5>No Autorizado ..</h5>
+    </NotAuthorized>
+</AuthorizeView>
+<Loading></Loading>
+<DialogShow></DialogShow>
+<DialogConfirm></DialogConfirm>
+
+@code {
+    LoginResponse _User = new LoginResponse();
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void Exit()
+    {
+        _navMgr.NavigateTo("/");
+    }
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _User = await _storage.GetValue<LoginResponse>("USER");
+    }
+
+
+
+    ThemeEpsas _ThemeGenesis = new ThemeEpsas();
+
+}
+
+<style>
+    .mud-input > input.mud-input-root-outlined, div.mud-input-slot.mud-input-root-outlined {
+        padding: 8.5px 9px;
+    }
+
+
+
+    element.style {
+    }
+
+    .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
+        background-color: var(--mud-palette-surface);
+        position: sticky;
+        z-index: 2;
+        top: 0;
+        font-weight: bold;
+        font-size: 0.75rem;
+    }
+
+    .mud-table-dense * .mud-table-row .mud-table-cell {
+        padding: 6px 24px 6px 16px;
+        padding-inline-start: 16px;
+        padding-inline-end: 24px;
+        font-size: 0.75rem;
+    }
+</style>

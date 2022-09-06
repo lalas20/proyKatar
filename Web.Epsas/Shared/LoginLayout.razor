@@ -1,0 +1,64 @@
+﻿@inherits LayoutComponentBase
+
+
+<MudThemeProvider Theme="_ThemeGenesis" />
+<MudSnackbarProvider />
+<MudDialogProvider FullWidth="true"
+                   MaxWidth="MaxWidth.ExtraSmall"
+                   CloseButton="false"
+                   DisableBackdropClick="true"
+                   NoHeader="false"
+                   Position="DialogPosition.TopCenter" />
+<MudSnackbarProvider />
+
+<div style="position: fixed;top: -10px;text-align: center;align-items: center;width: 100%; " class="d-none d-sm-flex">
+    <img src="imagen/logo_epsas.png" height="250" alt="Logo Institucional" style="margin: auto;">
+</div>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex align-center" Style="height: 100vh; align-items:center">
+    <MudPaper Elevation="25" Class="pa-0" Style="width: 700px; height: 350px; margin:auto">
+        @Body
+    </MudPaper>
+</MudContainer>
+
+
+
+
+<Loading></Loading>
+<DialogShow></DialogShow>
+<DialogConfirm></DialogConfirm>
+
+<style>
+    .mud-breadcrumb-separator {
+        padding: 0 6px;
+    }
+
+    .mud-breadcrumb-item.mud-disabled > a {
+        color: #2261a1;
+    }
+
+    .mud-appbar.mud-appbar-dense .mud-toolbar-appbar {
+        height: calc(var(--mud-appbar-height) - var(--mud-appbar-height)/3);
+    }
+</style>
+
+@code {
+
+
+    ThemeEpsas _ThemeGenesis = new ThemeEpsas();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //if (firstRender)
+        //    await _auth.LogoutnAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+
+
+
+
+}
